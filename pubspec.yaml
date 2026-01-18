@@ -1,13 +1,13 @@
 name: dart_validation_mcp
-description: Simplified Dart validation tools using dart analyze
+description: Simplified Dart validation tools using dart analyze with MCP integration
 version: 1.0.0
-homepage: https://github.com/example/dart_validation_mcp
+homepage: https://github.com/ston3druid/mcp-dart-validator
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=3.9.0 <4.0.0'
 
 dependencies:
-  dart_mcp_tools: ^0.1.0
+  # No external dependencies needed - keep it simple!
 
 dev_dependencies:
   lints: ^3.0.0
@@ -15,6 +15,4 @@ dev_dependencies:
 
 executables:
   dart_mcp_tools: dart_mcp_tools
-
-# Remove all the old complex validation files - we now use dart analyze
-# This reduces the codebase from ~4000 lines to ~200 lines
+  mcp_validation_server: mcp_validation_server

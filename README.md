@@ -6,6 +6,7 @@ A simplified and efficient Dart validation tool that leverages the built-in `dar
 
 - **[Main README](docs/README.md)** - Complete project documentation and usage guide
 - **[API Reference](docs/API_REFERENCE.md)** - Detailed API documentation and examples
+- **[MCP Integration](docs/MCP_INTEGRATION.md)** - Model Context Protocol server setup
 - **[Changelog](docs/CHANGELOG.md)** - Version history and migration guide
 - **[Production Guide](docs/PRODUCTION.md)** - Production deployment and CI/CD integration
 - **[Security Policy](docs/SECURITY.md)** - Security considerations and best practices
@@ -39,6 +40,7 @@ dart run bin/dart_mcp_tools.dart validate --verbose --format json
 - 🎯 **Cross-Platform** - Works on Windows, macOS, and Linux
 - 📝 **Multiple Output Formats** - Text and JSON output options
 - 🚫 **Smart Exclusions** - Configurable path exclusions with pattern matching
+- 🤖 **MCP Integration** - Simple Model Context Protocol server for AI assistants
 
 ## Description
 
@@ -50,7 +52,18 @@ This project provides simplified Dart validation tools by leveraging the built-i
 |---------|-------------|----------|
 | `validate` | Validate project using dart analyze | `--path <path>`, `--exclude <path>`, `--verbose`, `--format <format>` |
 | `analyze` | Run detailed dart analyze with verbose output | `--path <path>`, `--verbose` |
+| `mcp_validation_server` | Start MCP server for AI assistants | - |
 | `--help` | Show help message | - |
+
+### MCP Server
+
+Start the MCP server to integrate with AI assistants:
+
+```bash
+dart run bin/mcp_validation_server.dart
+```
+
+See [MCP Integration Guide](docs/MCP_INTEGRATION.md) for configuration details.
 
 ## Examples
 
