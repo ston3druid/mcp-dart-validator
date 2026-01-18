@@ -1,464 +1,415 @@
-# Flutter MCP Tools - API Reference
+# Dart Validation MCP - API Reference
 
 ## 📖 Overview
 
-This document provides a comprehensive reference for all public APIs in Flutter MCP Tools.
+This document provides a comprehensive reference for all public APIs in Dart Validation MCP.
 
 ## 🚀 Quick Start
 
 ```dart
-import 'package:flutter_mcp_tools/flutter_mcp_tools.dart';
+import 'package:dart_validation_mcp/flutter_mcp_tools.dart';
 
-// Analyze a project
-final analysis = await ProjectAnalyzer.analyzeProject('/path/to/project');
+// Simple validation
+final validator = SimpleValidator(projectPath: '.');
+final result = await validator.validate();
 
-// Validate results
-final validation = await ProjectValidator.validate(analysis);
-
-// Apply fixes via MCP
-final client = MCPRefactorClient();
-final fixes = await client.applyFixes('lib/main.dart');
+print('Files analyzed: ${result.filesAnalyzed}');
+print('Issues found: ${result.issues.length}');
 ```
 
 ## 📋 Core Classes
 
-### ProjectAnalyzer
+### SimpleValidator
 
-Main entry point for project analysis and validation.
+Main entry point for Dart project validation using `dart analyze`.
 
-#### Methods
+#### Constructor
 
-##### `analyzeProject(String projectPath)`
-
-Analyzes a Flutter/Dart project and returns comprehensive results.
+```dart
+SimpleValidator({
+  required String projectPath,
+  List<String> excludePaths = const [],
+  bool verbose = false,
+})
+```
 
 **Parameters:**
-- `projectPath` (String): Path to the project root directory
-
-**Returns:** `Future<ProjectAnalysisResult>`
+- `projectPath` (String, required): Path to the project root directory
+- `excludePaths` (List<String>, optional): Paths to exclude from analysis
+- `verbose` (bool, optional): Enable detailed progress output
 
 **Example:**
 ```dart
-final result = await ProjectAnalyzer.analyzeProject('/my/flutter_app');
-print('Project type: ${result.projectStructure?.isFlutterProject ? 'Flutter' : 'Dart'}');
-print('Dart files: ${result.projectStructure?.dartFileCount}');
-print('Dependencies: ${result.dependencies.length}');
+final validator = SimpleValidator(
+  projectPath: '/my/dart_project',
+  excludePaths: ['test', 'build', '.dart_tool'],
+  verbose: true,
+);
 ```
 
-##### `_detectProjectDartVersion(String projectPath)` (Private)
-
-Detects the Dart SDK version from pubspec.yaml.
-
-**Returns:** `Future<Version?>`
-
-##### `_analyzeProjectStructure(String projectPath)` (Private)
-
-Analyzes the project structure and file organization.
-
-**Returns:** `Future<ProjectStructure>`
-
-##### `_analyzeDependencies(String projectPath)` (Private)
-
-Analyzes project dependencies from pubspec.yaml.
-
-**Returns:** `Future<Map<String, DependencyInfo>>`
-
----
-
-### MCPRefactorClient
-
-Client for MCP-style refactoring operations.
-
 #### Methods
 
-##### `isServerAvailable()`
+##### `validate()`
 
-Checks if MCP server is available.
-
-**Returns:** `Future<bool>`
-
-##### `analyzeForRefactoring(String filePath)`
-
-Analyzes a file for refactoring opportunities.
-
-**Parameters:**
-- `filePath` (String): Path to the file to analyze
-
-**Returns:** `Future<Map<String, dynamic>>`
-
-##### `applyFixes(String filePath)`
-
-Applies automated fixes to a file.
-
-**Parameters:**
-- `filePath` (String): Path to the file to fix
-
-**Returns:** `Future<List<String>>` - List of applied fixes
-
-##### `formatCode(String content)`
-
-Formats Dart code according to standards.
-
-**Parameters:**
-- `content` (String): Dart code to format
-
-**Returns:** `Future<String>` - Formatted code
-
----
-
-### ProjectValidator
-
-Validates projects against various quality standards.
-
-#### Methods
-
-##### `validate(ProjectAnalysisResult analysis)`
-
-Validates a project analysis result.
-
-**Parameters:**
-- `analysis` (ProjectAnalysisResult): Analysis results to validate
+Runs dart analyze and returns validation results.
 
 **Returns:** `Future<ValidationResult>`
 
-##### `validateStructure(ProjectStructure structure)`
-
-Validates project structure.
-
-**Parameters:**
-- `structure` (ProjectStructure): Project structure to validate
-
-**Returns:** `ValidationResult`
-
----
-
-### PubDevChecker
-
-Validates packages against pub.dev standards.
-
-#### Methods
-
-##### `checkPackage(String packageName)`
-
-Checks a package against pub.dev requirements.
-
-**Parameters:**
-- `packageName` (String): Name of the package to check
-
-**Returns:** `Future<PubDevValidationResult>`
-
-##### `validateDependencies(Map<String, DependencyInfo> dependencies)`
-
-Validates project dependencies.
-
-**Parameters:**
-- `dependencies` (Map<String, DependencyInfo>): Project dependencies
-
-**Returns:** `DependencyValidationResult`
-
----
-
-### FlutterDocsChecker
-
-Validates Flutter API documentation.
-
-#### Methods
-
-##### `checkDocumentation(String projectPath)`
-
-Checks Flutter documentation quality.
-
-**Parameters:**
-- `projectPath` (String): Path to the project
-
-**Returns:** `Future<DocumentationResult>`
-
-##### `validateApiDocs(String filePath)`
-
-Validates API documentation in a specific file.
-
-**Parameters:**
-- `filePath` (String): Path to the Dart file
-
-**Returns:** `ApiDocValidationResult`
-
----
-
-## 📊 Data Models
-
-### ProjectAnalysisResult
-
-Contains comprehensive analysis results for a project.
-
-#### Properties
-
+**Example:**
 ```dart
-class ProjectAnalysisResult {
-  final Version? projectDartVersion;      // Detected Dart SDK version
-  final Version? flutterVersion;          // Flutter version
-  final ProjectStructure? projectStructure; // Project structure info
-  final Map<String, DependencyInfo> dependencies; // Dependencies
-  final Map<String, dynamic> recommendedConfig; // Recommended config
-  final int? issues;                      // Number of issues found
+final result = await validator.validate();
+
+if (result.success) {
+  print('✅ Validation passed!');
+} else {
+  print('❌ Found ${result.issues.length} issues');
+  for (final issue in result.issues) {
+    print('  ${issue.type}: ${issue.message}');
+  }
 }
 ```
-
-#### Constructor
-
-```dart
-const ProjectAnalysisResult({
-  this.projectDartVersion,
-  this.flutterVersion,
-  this.projectStructure,
-  this.dependencies = const {},
-  this.recommendedConfig = const {},
-  this.issues = 0,
-});
-```
-
----
-
-### ProjectStructure
-
-Information about the project structure and organization.
-
-#### Properties
-
-```dart
-class ProjectStructure {
-  final bool isFlutterProject;      // True if Flutter project
-  final int dartFileCount;         // Number of Dart files
-  final int testFileCount;         // Number of test files
-  final bool hasTests;              // True if tests exist
-  final bool hasGeneratedFiles;     // True if generated files exist
-}
-```
-
-#### Constructor
-
-```dart
-const ProjectStructure({
-  this.isFlutterProject = false,
-  this.dartFileCount = 0,
-  this.testFileCount = 0,
-  this.hasTests = false,
-  this.hasGeneratedFiles = false,
-});
-```
-
----
-
-### DependencyInfo
-
-Information about a project dependency.
-
-#### Properties
-
-```dart
-class DependencyInfo {
-  final String name;     // Package name
-  final String version;  // Package version
-}
-```
-
-#### Constructor
-
-```dart
-const DependencyInfo({
-  required this.name,
-  required this.version,
-});
-```
-
----
 
 ### ValidationResult
 
-Result of validation operations.
+Contains the results of a validation operation.
 
 #### Properties
 
+- `success` (bool): Whether validation passed without issues
+- `issues` (List<ValidationIssue>): List of found issues
+- `message` (String): Summary message
+- `filesAnalyzed` (int): Number of Dart files analyzed
+- `analysisTime` (Duration): Time taken for analysis
+
+#### Computed Properties
+
+- `errorCount` (int): Number of error-level issues
+- `warningCount` (int): Number of warning-level issues
+- `infoCount` (int): Number of info-level issues
+
+**Example:**
 ```dart
-class ValidationResult {
-  final bool isValid;                    // Overall validation status
-  final List<String> errors;            // Error messages
-  final List<String> warnings;          // Warning messages
-  final List<String> suggestions;        // Improvement suggestions
-  final Map<String, dynamic> metrics;    // Validation metrics
-}
+final result = await validator.validate();
+
+print('Status: ${result.success ? "PASS" : "FAIL"}');
+print('Files: ${result.filesAnalyzed}');
+print('Time: ${result.analysisTime.inMilliseconds}ms');
+print('Errors: ${result.errorCount}');
+print('Warnings: ${result.warningCount}');
+print('Info: ${result.infoCount}');
 ```
 
----
+### ValidationIssue
 
-## 🔧 Utility Classes
+Represents a single validation issue found by dart analyze.
 
-### DartVersionConfig
+#### Constructor
 
-Handles Dart version detection and configuration.
+```dart
+const ValidationIssue({
+  required String filePath,
+  required String message,
+  required String type,
+  int? line,
+  int? column,
+  String? rule,
+  String? suggestion,
+})
+```
+
+**Parameters:**
+- `filePath` (String, required): Path to the file with the issue
+- `message` (String, required): Issue description
+- `type` (String, required): Issue type ('error', 'warning', 'info')
+- `line` (int?, optional): Line number where issue occurs
+- `column` (int?, optional): Column number where issue occurs
+- `rule` (String?, optional): Lint rule that triggered the issue
+- `suggestion` (String?, optional): Suggested fix for the issue
+
+#### Properties
+
+- `filePath` (String): File path containing the issue
+- `message` (String): Description of the issue
+- `type` (String): Issue severity level
+- `line` (int?): Line number (null if not applicable)
+- `column` (int?): Column number (null if not applicable)
+- `rule` (String?): Lint rule identifier
+- `suggestion` (String?): Suggested fix from dart analyze
 
 #### Methods
 
-##### `getRecommendedLintConfig(Version? dartVersion)`
+##### `toString()`
 
-Gets recommended lint configuration for a Dart version.
+Returns a formatted string representation of the issue.
 
-**Parameters:**
-- `dartVersion` (Version?): Dart SDK version
+**Returns:** `String`
 
-**Returns:** `Map<String, dynamic>`
+**Example:**
+```dart
+final issue = ValidationIssue(
+  filePath: 'lib/main.dart',
+  message: 'Unused variable',
+  type: 'warning',
+  line: 15,
+  column: 10,
+);
 
-##### `isVersionSupported(Version version)`
+print(issue.toString()); // warning: lib/main.dart (15:10) - Unused variable
+```
 
-Checks if a Dart version is supported.
+## 🔧 CLI Interface
 
-**Parameters:**
-- `version` (Version): Version to check
+### Main Commands
 
-**Returns:** `bool`
+#### `validate`
 
----
+Validates a Dart project using dart analyze.
 
-## 📝 Usage Examples
+```bash
+dart run bin/dart_mcp_tools.dart validate [options]
+```
 
-### Complete Project Analysis
+**Options:**
+- `--path <path>`: Specify project path (default: current directory)
+- `--exclude <path>`: Exclude path from analysis (can be used multiple times)
+- `--verbose`: Show detailed progress and error information
+- `--format <format>`: Output format: text (default) or json
+- `--help, -h`: Show help message
+
+**Examples:**
+```bash
+# Basic validation
+dart run bin/dart_mcp_tools.dart validate
+
+# With exclusions
+dart run bin/dart_mcp_tools.dart validate --exclude test --exclude build
+
+# Verbose output
+dart run bin/dart_mcp_tools.dart validate --verbose
+
+# JSON format
+dart run bin/dart_mcp_tools.dart validate --format json
+
+# Custom path
+dart run bin/dart_mcp_tools.dart validate --path /path/to/project
+```
+
+#### `analyze`
+
+Runs detailed dart analyze with verbose output.
+
+```bash
+dart run bin/dart_mcp_tools.dart analyze [options]
+```
+
+**Options:**
+- `--path <path>`: Specify project path (default: current directory)
+- `--verbose`: Show detailed progress and error information
+- `--help, -h`: Show help message
+
+**Examples:**
+```bash
+# Detailed analysis
+dart run bin/dart_mcp_tools.dart analyze
+
+# Verbose analysis
+dart run bin/dart_mcp_tools.dart analyze --verbose
+
+# Custom path
+dart run bin/dart_mcp_tools.dart analyze --path /path/to/project
+```
+
+## 📊 Output Formats
+
+### Text Format (Default)
+
+Human-readable output with emojis and structured formatting.
+
+```
+🔍 Validating project at: /path/to/project
+⏳ Running dart analyze...
+
+📊 Validation Results:
+   Status: ✅ Success
+   Files analyzed: 4
+   Analysis time: 754ms
+   Message: No issues found
+```
+
+### JSON Format
+
+Machine-readable JSON output for CI/CD integration.
+
+```json
+{
+  "success": true,
+  "filesAnalyzed": 4,
+  "analysisTimeMs": 689,
+  "message": "No issues found",
+  "summary": {
+    "totalIssues": 0,
+    "errors": 0,
+    "warnings": 0,
+    "info": 0
+  },
+  "issues": []
+}
+```
+
+## 🛡️ Error Handling
+
+### Validation Errors
+
+The tool handles various error conditions gracefully:
+
+- **Dart SDK not found**: Clear error message with installation guidance
+- **Not a Dart project**: Detects missing pubspec.yaml
+- **Malformed JSON**: Skips invalid lines and reports count
+- **Process failures**: Comprehensive error reporting
+
+### Error Types
+
+- `ValidationException`: Base exception for validation errors
+- `DartSdkNotFoundException`: Dart SDK not available
+- `NotADartProjectException`: Project lacks pubspec.yaml
+- `AnalysisFailedException`: dart analyze process failed
+
+## 🎯 Usage Patterns
+
+### Basic Validation
 
 ```dart
-import 'package:flutter_mcp_tools/flutter_mcp_tools.dart';
+import 'package:dart_validation_mcp/flutter_mcp_tools.dart';
 
-Future<void> analyzeMyProject() async {
-  try {
-    // 1. Analyze the project
-    final analysis = await ProjectAnalyzer.analyzeProject('/path/to/my/project');
-    
-    // 2. Display basic info
-    print('Project Type: ${analysis.projectStructure?.isFlutterProject ? 'Flutter' : 'Dart'}');
-    print('Dart Files: ${analysis.projectStructure?.dartFileCount}');
-    print('Dependencies: ${analysis.dependencies.length}');
-    
-    // 3. Validate the project
-    final validation = await ProjectValidator.validate(analysis);
-    
-    if (validation.isValid) {
-      print('✅ Project is valid!');
-    } else {
-      print('❌ Found ${validation.errors.length} issues:');
-      for (final error in validation.errors) {
-        print('  - $error');
+Future<bool> validateProject(String path) async {
+  final validator = SimpleValidator(projectPath: path);
+  final result = await validator.validate();
+  
+  return result.success;
+}
+```
+
+### CI/CD Integration
+
+```dart
+import 'package:dart_validation_mcp/flutter_mcp_tools.dart';
+
+Future<void> ciValidation() async {
+  final validator = SimpleValidator(
+    projectPath: '.',
+    excludePaths: ['test', 'build'],
+    verbose: true,
+  );
+  
+  final result = await validator.validate();
+  
+  if (!result.success) {
+    print('❌ CI validation failed:');
+    for (final issue in result.issues) {
+      if (issue.type == 'error') {
+        print('  ${issue.message}');
       }
     }
-    
-    // 4. Show suggestions
-    if (validation.suggestions.isNotEmpty) {
-      print('💡 Suggestions:');
-      for (final suggestion in validation.suggestions) {
-        print('  - $suggestion');
-      }
-    }
-    
-  } catch (e) {
-    print('Error analyzing project: $e');
+    exit(1);
   }
+  
+  print('✅ CI validation passed');
 }
 ```
 
-### MCP Refactoring
+### Custom Reporting
 
 ```dart
-Future<void> refactorFile() async {
-  final client = MCPRefactorClient();
+import 'package:dart_validation_mcp/flutter_mcp_tools.dart';
+
+Future<Map<String, dynamic>> generateReport(String path) async {
+  final validator = SimpleValidator(projectPath: path);
+  final result = await validator.validate();
   
-  // Check if server is available
-  if (await client.isServerAvailable()) {
-    // Analyze file for refactoring opportunities
-    final analysis = await client.analyzeForRefactoring('lib/main.dart');
-    print('Analysis result: $analysis');
-    
-    // Apply fixes
-    final fixes = await client.applyFixes('lib/main.dart');
-    print('Applied ${fixes.length} fixes:');
-    for (final fix in fixes) {
-      print('  - $fix');
-    }
-  } else {
-    print('MCP server is not available');
-  }
+  return {
+    'timestamp': DateTime.now().toIso8601String(),
+    'projectPath': path,
+    'success': result.success,
+    'filesAnalyzed': result.filesAnalyzed,
+    'analysisTimeMs': result.analysisTime.inMilliseconds,
+    'issues': result.issues.map((issue) => {
+      'type': issue.type,
+      'file': issue.filePath,
+      'line': issue.line,
+      'message': issue.message,
+    }).toList(),
+  };
 }
 ```
 
-### Dependency Validation
+## 🔍 Advanced Features
+
+### Path Exclusions
+
+Exclude specific directories or files from analysis:
 
 ```dart
-Future<void> validateDependencies() async {
-  final analysis = await ProjectAnalyzer.analyzeProject('/path/to/project');
-  final checker = PubDevChecker();
-  
-  final result = await checker.validateDependencies(analysis.dependencies);
-  
-  print('Dependencies validation:');
-  print('  Valid: ${result.isValid}');
-  print('  Outdated: ${result.outdatedPackages.length}');
-  print('  Issues: ${result.issues.length}');
-  
-  if (result.outdatedPackages.isNotEmpty) {
-    print('Outdated packages:');
-    for (final package in result.outdatedPackages) {
-      print('  - ${package.name}: ${package.current} → ${package.latest}');
-    }
-  }
-}
+final validator = SimpleValidator(
+  projectPath: '.',
+  excludePaths: [
+    'test',           // Exclude test directory
+    'build',          // Exclude build directory
+    '.dart_tool',     // Exclude Dart tool cache
+    'generated',      // Exclude generated files
+  ],
+);
 ```
 
-## 🚨 Error Handling
+### Verbose Mode
 
-### Common Exceptions
+Enable detailed progress and error information:
 
-- `FileSystemException`: File system related errors
-- `FormatException`: Parsing errors (e.g., invalid version format)
-- `ArgumentError`: Invalid arguments passed to methods
+```dart
+final validator = SimpleValidator(
+  projectPath: '.',
+  verbose: true,  // Shows file counting, parsing errors, etc.
+);
+```
 
-### Best Practices
+### Custom Error Handling
 
 ```dart
 try {
-  final analysis = await ProjectAnalyzer.analyzeProject(projectPath);
-  // Use analysis results
-} on FileSystemException catch (e) {
-  // Handle file system errors
-  print('File system error: ${e.message}');
-} on FormatException catch (e) {
-  // Handle parsing errors
-  print('Format error: ${e.message}');
+  final result = await validator.validate();
+  // Process results...
 } catch (e) {
-  // Handle any other errors
-  print('Unexpected error: $e');
+  if (e is DartSdkNotFoundException) {
+    print('Please install Dart SDK: https://dart.dev/get-dart');
+  } else if (e is NotADartProjectException) {
+    print('Not a valid Dart project (pubspec.yaml not found)');
+  } else {
+    print('Unexpected error: $e');
+  }
 }
 ```
 
-## 🔍 Configuration
+## 📝 Library Exports
 
-### Environment Variables
+The main library exports the following classes:
 
-- `FLUTTER_MCP_TOOLS_LOG_LEVEL`: Set logging level (debug, info, warning, error)
-- `FLUTTER_MCP_TOOLS_CACHE_DIR`: Custom cache directory
-- `FLUTTER_MCP_TOOLS_SERVER_URL`: Custom MCP server URL
+```dart
+// Main library export
+library flutter_mcp_tools;
 
-### Configuration Files
+// Simple validation
+export 'src/validation/simple_validator.dart';
 
-The tool respects standard Flutter/Dart configuration files:
-- `pubspec.yaml`: Project dependencies and metadata
-- `analysis_options.yaml`: Linting and analysis rules
-- `.dart_tool/`: Build cache and tool data
+// Models and utilities
+export 'src/models/validation_models.dart';
+```
 
----
+## 🚀 Performance Considerations
 
-## 📚 Additional Resources
+- **File Counting**: Uses optimized `Directory.list` for cross-platform compatibility
+- **Memory Usage**: Streams JSON output to minimize memory footprint
+- **Error Handling**: Graceful degradation for malformed analyzer output
+- **Caching**: Relies on dart analyze's built-in caching mechanisms
 
-- [Contributing Guide](CONTRIBUTING.md) - How to contribute
-- [Architecture Overview](ARCHITECTURE.md) - System design
-- [Examples](examples/) - Code examples
-- [Flutter Documentation](https://flutter.dev/docs) - Flutter docs
-- [Dart Language Guide](https://dart.dev/guides) - Dart docs
+## 📚 Examples
 
----
-
-*This API reference is part of Flutter MCP Tools, licensed under MIT License.*
+See the main [README.md](README.md) for more comprehensive usage examples and integration patterns.
