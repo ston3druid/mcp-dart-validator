@@ -1,9 +1,9 @@
 # Dart Validation MCP
 
 [![Pub Version](https://img.shields.io/pub/v/dart_validation_mcp)](https://pub.dev/packages/dart_validation_mcp)
-[![GitHub stars](https://img.shields.io/github/stars/cascade-ai/dart_validation_mcp)](https://github.com/cascade-ai/dart_validation_mcp/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/cascade-ai/dart_validation_mcp)](https://github.com/cascade-ai/dart_validation_mcp/network)
-[![GitHub issues](https://img.shields.io/github/issues/cascade-ai/dart_validation_mcp)](https://github.com/cascade-ai/dart_validation_mcp/issues)
+[![GitHub stars](https://img.shields.io/github/stars/ston3druid/mcp-dart-validator)](https://github.com/ston3druid/mcp-dart-validator/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/ston3druid/mcp-dart-validator)](https://github.com/ston3druid/mcp-dart-validator/network)
+[![GitHub issues](https://img.shields.io/github/issues/ston3druid/mcp-dart-validator)](https://github.com/ston3druid/mcp-dart-validator/issues)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Production-ready Dart validation tools with MCP (Model Context Protocol) integration for comprehensive code quality analysis, linting, and API compliance checking.
@@ -258,7 +258,7 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guid
 
 ### Development Setup
 ```bash
-git clone https://github.com/cascade-ai/dart_validation_mcp
+git clone https://github.com/ston3druid/mcp-dart-validator
 cd dart_validation_mcp
 dart pub get
 dart test
@@ -276,10 +276,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- 📖 [Documentation](https://pub.dev/packages/dart_validation_mcp)
-- 🐛 [Issue Tracker](https://github.com/cascade-ai/dart_validation_mcp/issues)
-- 💬 [Discussions](https://github.com/cascade-ai/dart_validation_mcp/issues)
+- 📖 [Documentation](https://github.com/ston3druid/mcp-dart-validator)
+- 🐛 [Issue Tracker](https://github.com/ston3druid/mcp-dart-validator/issues)
+- 💬 [Discussions](https://github.com/ston3druid/mcp-dart-validator/discussions)
 - 📧 [Email](mailto:dev@cascade-ai)
+- 🌐 [Repository](https://github.com/ston3druid/mcp-dart-validator)
 
 ---
 
