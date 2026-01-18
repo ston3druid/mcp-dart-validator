@@ -7,8 +7,8 @@ issue_tracker: https://github.com/ston3druid/mcp-dart-validator/issues
 documentation: https://github.com/ston3druid/mcp-dart-validator
 
 authors:
-  - ston3druid <contact@mcp-dart-validator.dev>
-  - Cascade AI <contact@mcp-dart-validator.dev>
+  - ston3druid
+  - Cascade AI
 
 environment:
   sdk: ^3.10.3

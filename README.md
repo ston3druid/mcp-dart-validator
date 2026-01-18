@@ -282,7 +282,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - 📖 [Documentation](https://github.com/ston3druid/mcp-dart-validator)
 - 🐛 [Issue Tracker](https://github.com/ston3druid/mcp-dart-validator/issues)
-- 📧 [Email](mailto:contact@mcp-dart-validator.dev)
 - 🌐 [Repository](https://github.com/ston3druid/mcp-dart-validator)
 - ⭐ [Star on GitHub](https://github.com/ston3druid/mcp-dart-validator)
 
