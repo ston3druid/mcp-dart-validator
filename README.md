@@ -1,10 +1,10 @@
 # Dart Validation MCP
 
-[![Pub Version](https://img.shields.io/pub/v/dart_validation_mcp)](https://pub.dev/packages/dart_validation_mcp)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub stars](https://img.shields.io/github/stars/ston3druid/mcp-dart-validator)](https://github.com/ston3druid/mcp-dart-validator/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/ston3druid/mcp-dart-validator)](https://github.com/ston3druid/mcp-dart-validator/network)
 [![GitHub issues](https://img.shields.io/github/issues/ston3druid/mcp-dart-validator)](https://github.com/ston3druid/mcp-dart-validator/issues)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Coming Soon to pub.dev](https://img.shields.io/badge/pub.dev-Coming%20Soon-blue)](https://github.com/ston3druid/mcp-dart-validator)
 
 Production-ready Dart validation tools with MCP (Model Context Protocol) integration for comprehensive code quality analysis, linting, and API compliance checking.
 
@@ -23,11 +23,15 @@ Production-ready Dart validation tools with MCP (Model Context Protocol) integra
 
 ### Installation
 
-```bash
-# From pub.dev
-dart pub add dart_validation_mcp
+**Currently available from GitHub repository:**
 
-# Or add to pubspec.yaml
+```bash
+# Clone the repository
+git clone https://github.com/ston3druid/mcp-dart-validator.git
+cd mcp-dart-validator
+dart pub get
+
+# Or add to pubspec.yaml (when published to pub.dev)
 dependencies:
   dart_validation_mcp: ^1.0.0
 ```
