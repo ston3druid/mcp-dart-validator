@@ -201,8 +201,6 @@ class ErrorContextProvider {
 
   /// Extract keywords from error message
   List<String> _extractKeywords(String errorMessage) {
-    final keywords = <String>[];
-    
     // Remove common words and extract meaningful keywords
     final commonWords = {
       'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with',
@@ -210,17 +208,15 @@ class ErrorContextProvider {
       'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both',
       'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not',
       'only', 'own', 'same', 'so', 'than', 'too', 'very', 'can', 'will', 'just',
-      'don', 'should', 'would', 'could', 'should', 'would', 'could',
+      'don', 'should', 'would', 'could',
     };
     
-    final words = errorMessage
+    return errorMessage
         .replaceAll(RegExp(r'[^\w\s]'), ' ')
         .split(' ')
         .where((word) => word.isNotEmpty && !commonWords.contains(word.toLowerCase()))
         .where((word) => word.length > 2)
         .toList();
-    
-    return keywords;
   }
 
   Stream<File> _findDartFiles() async* {

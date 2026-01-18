@@ -156,7 +156,6 @@ class SmartSuggester {
     if (codeContext.contains('new ') && codeContext.contains('(')) {
       for (final className in context.classes.keys) {
         if (codeContext.contains(className)) {
-          final classInfo = context.classes[className];
           suggestions.add(CodeSuggestion(
             description: 'Use ${className} class from project',
             code: 'final instance = ${className}();',
@@ -276,7 +275,6 @@ class SmartSuggester {
     if (a.isEmpty || b.isEmpty) return 0.0;
     
     final longer = a.length > b.length ? a : b;
-    final shorter = a.length > b.length ? b : a;
     
     if (longer.isEmpty) return 0.0;
     

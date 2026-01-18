@@ -182,10 +182,6 @@ class ProjectAnalyzer {
         featureSet: FeatureSet.latestLanguageVersion(),
       );
       
-      if (parseResult.unit == null) {
-        return [];
-      }
-      
       // Get all directives (imports, exports, etc.)
       final directives = parseResult.unit.directives;
       
