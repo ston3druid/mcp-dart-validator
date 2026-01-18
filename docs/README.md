@@ -6,11 +6,15 @@
 [![GitHub issues](https://img.shields.io/github/issues/ston3druid/mcp-dart-validator)](https://github.com/ston3druid/mcp-dart-validator/issues)
 [![Dart SDK](https://img.shields.io/badge/Dart%20SDK-%3E%3D3.0.0-blue)](https://dart.dev/get-dart)
 
-A simplified and efficient Dart validation tool that leverages the built-in `dart analyze` command for fast, reliable code validation with enhanced reporting and configuration options.
+A comprehensive Dart validation tool with MCP (Model Context Protocol) integration that leverages the built-in `dart analyze` command for fast, reliable code validation with AI-friendly context analysis, smart error suggestions, and enhanced reporting options.
 
 ## ✨ Features
 
 - 🚀 **Fast & Lightweight** - Uses native `dart analyze` for optimal performance
+- 🤖 **AI-Friendly MCP Server** - Integrated MCP server for AI assistant integration
+- 🧠 **Smart Context Analysis** - Project structure understanding and dependency mapping
+- 💡 **Intelligent Suggestions** - Context-aware code improvement recommendations
+- 🔍 **Error Context Provider** - Detailed error analysis with solutions
 - 📊 **Enhanced Reporting** - File counting, timing, and detailed issue summaries
 - 🔧 **Flexible Configuration** - Exclude paths, multiple output formats, verbose options
 - 🛡️ **Robust Error Handling** - Pre-flight checks and comprehensive error reporting
@@ -53,6 +57,21 @@ dart run bin/dart_mcp_tools.dart validate --exclude test --exclude build
 
 # Custom project path
 dart run bin/dart_mcp_tools.dart validate --path /path/to/project
+
+# Start MCP server for AI integration
+dart run bin/mcp_validation_server.dart
+```
+
+### MCP Server Usage
+
+The MCP server provides AI-friendly tools for Dart validation and context analysis:
+
+```bash
+# Start the MCP server
+dart run bin/mcp_validation_server.dart
+
+# Test MCP server (example)
+echo '{"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2024-11-05", "capabilities": {"tools": {}}}}}' | dart run bin/mcp_validation_server.dart
 ```
 
 ## 📋 Available Commands
@@ -88,19 +107,57 @@ dart run bin/dart_mcp_tools.dart validate --path /path/to/project
 ```
 dart_validation_mcp/
 ├── lib/
-│   ├── flutter_mcp_tools.dart       # Main library export
+│   ├── dart_validation_mcp.dart     # Main library export
 │   └── src/
-│       ├── validation/
-│       │   └── simple_validator.dart  # Core validation engine
-│       └── models/
-│           └── validation_models.dart # Data models
+│       ├── context/
+│       │   ├── project_analyzer.dart     # Project structure analysis
+│       │   ├── error_context_provider.dart # Error context and solutions
+│       │   └── smart_suggester.dart      # Intelligent code suggestions
+│       ├── mcp/
+│       │   └── mcp_server.dart           # MCP server implementation
+│       ├── models/
+│       │   ├── context_models.dart       # Context analysis models
+│       │   └── validation_models.dart    # Validation result models
+│       └── validation/
+│           └── simple_validator.dart     # Core validation engine
 ├── bin/
-│   └── dart_mcp_tools.dart          # Enhanced CLI interface
+│   ├── dart_mcp_tools.dart          # CLI validation interface
+│   └── mcp_validation_server.dart   # MCP server executable
 └── docs/                             # Documentation
     ├── README.md                     # Main documentation
     ├── API_REFERENCE.md              # API reference
     ├── CHANGELOG.md                  # Version history
     └── ...                           # Other docs
+```
+
+## 🤖 MCP Server Tools
+
+The integrated MCP server provides the following AI-friendly tools:
+
+| Tool | Purpose | Use Case |
+|------|---------|----------|
+| `validate_dart_project` | Validate Dart projects with smart defaults | Quick validation, CI/CD checks |
+| `analyze_project_context` | Understand project structure and dependencies | Architecture decisions, onboarding |
+| `get_error_context` | Get context and solutions for specific errors | Debugging, learning |
+| `get_suggestions` | Get smart code suggestions based on context | Code improvement, refactoring |
+| `help` | Get comprehensive help and usage information | Discovery, learning |
+| `self_improve` | Analyze and improve the MCP server itself | Maintenance, quality assurance |
+
+### MCP Integration Example
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "validate_dart_project",
+    "arguments": {
+      "project_path": ".",
+      "verbose": true
+    }
+  }
+}
 ```
 
 ## 📊 Validation Features
@@ -183,7 +240,7 @@ echo "✅ Validation passed."
 
 ### Basic Project Validation
 ```dart
-import 'package:dart_validation_mcp/flutter_mcp_tools.dart';
+import 'package:dart_validation_mcp/dart_validation_mcp.dart';
 
 void main() async {
   final validator = SimpleValidator(projectPath: '.');
@@ -206,7 +263,7 @@ void main() async {
 
 ### Advanced Validation with Options
 ```dart
-import 'package:dart_validation_mcp/flutter_mcp_tools.dart';
+import 'package:dart_validation_mcp/dart_validation_mcp.dart';
 
 void main() async {
   final validator = SimpleValidator(

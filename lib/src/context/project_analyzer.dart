@@ -249,19 +249,28 @@ class ProjectAnalyzer {
       try {
         final lines = await file.readAsLines();
         for (int i = 0; i < lines.length; i++) {
-          final line = lines[i];
+          final line = lines[i].trim();
           
-          // Look for common deprecated patterns
-          if (line.contains('deprecated') || 
-              line.contains('@deprecated') ||
-              line.contains('will be removed')) {
-            deprecatedUsages.add(DeprecatedApiUsage(
-              filePath: file.path,
-              line: i + 1,
-              deprecatedApi: _extractDeprecatedApi(line),
-              replacement: _extractReplacement(line),
-              message: 'Deprecated API usage found',
-            ));
+          // Skip empty lines and comments
+          if (line.isEmpty || line.startsWith('//') || line.startsWith('/*')) {
+            continue;
+          }
+          
+          // Look for actual deprecated annotations
+          if (line.contains('@deprecated') || line.contains('@Deprecated(')) {
+            final deprecatedApi = _extractDeprecatedApi(line);
+            final replacement = _extractReplacement(line);
+            
+            // Only add if it's a real deprecated API, not a false positive
+            if (_isRealDeprecatedApi(deprecatedApi, line)) {
+              deprecatedUsages.add(DeprecatedApiUsage(
+                filePath: file.path,
+                line: i + 1,
+                deprecatedApi: deprecatedApi,
+                replacement: replacement,
+                message: 'Deprecated API usage found',
+              ));
+            }
           }
         }
       } catch (e) {
@@ -270,6 +279,22 @@ class ProjectAnalyzer {
     }
     
     return deprecatedUsages;
+  }
+
+  /// Check if this is a real deprecated API usage
+  bool _isRealDeprecatedApi(String deprecatedApi, String line) {
+    // Filter out false positives
+    if (deprecatedApi == 'Pattern matching - not deprecated') return false;
+    if (deprecatedApi == 'Unknown deprecated API') return false;
+    
+    // Filter out code patterns that aren't deprecated APIs
+    if (line.contains(RegExp(r'[|*?+\[\](){}\\]'))) return false;
+    if (line.contains(') ||') || line.contains(') &&')) return false;
+    if (line.contains('annotations with content')) return false;
+    if (line.contains(')) {') || line.contains(');')) return false;
+    
+    // Only keep actual deprecated annotations
+    return line.contains('@deprecated') || line.contains('@Deprecated(');
   }
 
   /// Analyze code style and patterns
@@ -488,8 +513,29 @@ class ProjectAnalyzer {
   }
 
   String _extractDeprecatedApi(String line) {
-    final match = RegExp(r'@deprecated\s*([^(]*)').firstMatch(line);
-    return match?.group(1)?.trim() ?? 'Unknown deprecated API';
+    // Look for @deprecated annotations with content
+    if (line.contains('@deprecated')) {
+      final parts = line.split('@deprecated');
+      if (parts.length > 1) {
+        final content = parts[1].trim();
+        if (content.isNotEmpty) {
+          return content.split(' ').take(3).join(' '); // First 3 words
+        }
+      }
+      return 'Deprecated API';
+    }
+    
+    // Look for @Deprecated annotation
+    if (line.contains('@Deprecated')) {
+      return 'Deprecated API';
+    }
+    
+    // Avoid false positives from regex patterns and operators
+    if (line.contains(RegExp(r'[|*?+\[\](){}\\]'))) {
+      return 'Pattern matching - not deprecated';
+    }
+    
+    return 'Unknown deprecated API';
   }
 
   String? _extractReplacement(String line) {

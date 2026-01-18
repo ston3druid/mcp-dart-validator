@@ -34,6 +34,11 @@ class SmartSuggester {
       suggestions.addAll(_getSuggestionsForErrorMessage(errorMessage, projectContext));
     }
     
+    // If no specific suggestions were generated, provide helpful defaults
+    if (suggestions.isEmpty) {
+      suggestions.addAll(_getDefaultSuggestions(projectContext, codeContext));
+    }
+    
     // Sort by confidence and return top suggestions
     suggestions.sort((a, b) => b.confidence.compareTo(a.confidence));
     return suggestions.take(5).toList();
@@ -306,5 +311,72 @@ class SmartSuggester {
     }
     
     return matrix[a.length][b.length];
+  }
+
+  /// Get default suggestions when no specific context is provided
+  List<CodeSuggestion> _getDefaultSuggestions(ProjectContext context, String? codeContext) {
+    final suggestions = <CodeSuggestion>[];
+    
+    // Suggest using project's own classes
+    if (context.classes.isNotEmpty) {
+      final popularClasses = context.classes.keys.take(3);
+      for (final className in popularClasses) {
+        suggestions.add(CodeSuggestion(
+          description: 'Use ${className} class from your project',
+          code: 'final instance = ${className}();',
+          explanation: 'Your project defines ${className} class - consider using it',
+          requiredImports: [],
+          relatedClasses: [className],
+          confidence: 'medium',
+        ));
+      }
+    }
+    
+    // Suggest common Dart patterns based on project style
+    if (context.codeStyle.usesNullSafety) {
+      suggestions.add(CodeSuggestion(
+        description: 'Use null safety features',
+        code: 'String? nullableString = "value";\nif (nullableString != null) { print(nullableString); }',
+        explanation: 'Your project uses null safety - consider these patterns',
+        requiredImports: [],
+        relatedClasses: [],
+        confidence: 'medium',
+      ));
+    }
+    
+    if (context.codeStyle.asyncPatterns.isNotEmpty) {
+      suggestions.add(CodeSuggestion(
+        description: 'Use async/await patterns',
+        code: 'Future<String> fetchData() async { await Future.delayed(Duration(seconds: 1)); return "data"; }',
+        explanation: 'Your project uses async patterns - here\'s a common pattern',
+        requiredImports: ['dart:async'],
+        relatedClasses: ['Future', 'Duration'],
+        confidence: 'medium',
+      ));
+    }
+    
+    // Suggest common imports based on project dependencies
+    if (context.externalPackages.contains('analyzer')) {
+      suggestions.add(CodeSuggestion(
+        description: 'Use Dart analyzer for code analysis',
+        code: 'final result = parseString(content: code);\nprint(result.unit);',
+        explanation: 'Your project uses analyzer package - consider leveraging it',
+        requiredImports: ['package:analyzer/dart/analysis/utilities.dart'],
+        relatedClasses: [],
+        confidence: 'low',
+      ));
+    }
+    
+    // Generic helpful suggestions
+    suggestions.add(CodeSuggestion(
+      description: 'Add proper error handling',
+      code: 'try { /* risky operation */ } catch (e) { print("Error: \${e}"); }',
+      explanation: 'Always include error handling for robust code',
+      requiredImports: [],
+      relatedClasses: [],
+      confidence: 'low',
+    ));
+    
+    return suggestions;
   }
 }

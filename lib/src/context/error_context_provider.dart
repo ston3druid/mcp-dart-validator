@@ -176,6 +176,10 @@ class ErrorContextProvider {
   Future<List<String>> _suggestImports(String errorMessage) async {
     final imports = <String>[];
     
+    // First check for project-specific imports
+    final projectImports = await _suggestProjectImports(errorMessage);
+    imports.addAll(projectImports);
+    
     // Common import suggestions based on error patterns
     final errorToImport = {
       'file': ["import 'dart:io';"],
@@ -185,15 +189,66 @@ class ErrorContextProvider {
       'convert': ["import 'dart:convert';"],
       'math': ["import 'dart:math' as math;"],
       'collection': ["import 'dart:collection';"],
-      'uri': ["import 'dart:uri';"],
+      'uri': ["import 'dart:core';"],  // Fixed: Uri is in dart:core
       'path': ["import 'package:path/path.dart';"],
       'json': ["import 'dart:convert';"],
+      'future': ["import 'dart:async';"],
+      'stream': ["import 'dart:async';"],
+      'datetime': ["import 'dart:core';"],  // DateTime is in dart:core
     };
     
     for (final pattern in errorToImport.entries) {
       if (errorMessage.toLowerCase().contains(pattern.key)) {
         imports.addAll(pattern.value);
       }
+    }
+    
+    // Remove duplicates while preserving order
+    final seen = <String>{};
+    return imports.where((import) => seen.add(import)).toList();
+  }
+
+  /// Suggest project-specific imports based on available classes
+  Future<List<String>> _suggestProjectImports(String errorMessage) async {
+    final imports = <String>[];
+    
+    try {
+      final files = await _findDartFiles().toList();
+      
+      // Look for class names mentioned in error message
+      final words = errorMessage.split(RegExp(r'[^\w]'));
+      
+      for (final file in files) {
+        final content = await file.readAsString();
+        final lines = content.split('\n');
+        
+        // Check if this file defines classes that might help
+        for (final line in lines) {
+          if (line.startsWith('class ')) {
+            final match = RegExp(r'class\s+(\w+)').firstMatch(line);
+            if (match != null) {
+              final className = match.group(1)!;
+              
+              // If the class name is mentioned in error, suggest importing it
+              if (words.any((word) => word.toLowerCase() == className.toLowerCase())) {
+                // Get relative path from project root
+                final relativePath = file.path.replaceFirst(projectPath, '');
+                final importPath = relativePath.replaceAll('\\', '/').replaceAll('.dart', '');
+                
+                // Handle lib/ path specially for package imports
+                if (importPath.startsWith('/lib/')) {
+                  final packageImport = importPath.replaceFirst('/lib/', '');
+                  imports.add("import 'package:dart_validation_mcp/$packageImport.dart';");
+                } else {
+                  imports.add("import '$importPath.dart';");
+                }
+              }
+            }
+          }
+        }
+      }
+    } catch (e) {
+      // If project import analysis fails, continue with common imports
     }
     
     return imports;

@@ -2,12 +2,155 @@
 
 ## 📖 Overview
 
-This document provides a comprehensive reference for all public APIs in Dart Validation MCP.
+This document provides a comprehensive reference for all public APIs in Dart Validation MCP, including both the library APIs and MCP server tools.
+
+## 🤖 MCP Server Tools
+
+The MCP server provides AI-friendly tools for Dart validation and context analysis. These tools are designed to be easily consumed by AI assistants and provide smart defaults with comprehensive error handling.
+
+### validate_dart_project
+
+Validate Dart projects with smart defaults and enhanced reporting.
+
+**Parameters:**
+- `project_path` (string, optional): Path to Dart project (default: ".")
+- `exclude_paths` (array, optional): Paths to exclude from analysis (default: ["build", ".dart_tool"])
+- `verbose` (boolean, optional): Show detailed output (default: false)
+- `format` (string, optional): Output format: text or json (default: "text")
+
+**Example:**
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "validate_dart_project",
+    "arguments": {
+      "project_path": ".",
+      "verbose": true
+    }
+  }
+}
+```
+
+### analyze_project_context
+
+Analyze project structure, dependencies, and available APIs.
+
+**Parameters:**
+- `project_path` (string, optional): Path to analyze (default: ".")
+
+**Example:**
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "analyze_project_context",
+    "arguments": {}
+  }
+}
+```
+
+### get_error_context
+
+Get context and suggestions for specific errors.
+
+**Parameters:**
+- `error_message` (string, required): Error message to analyze
+- `file_path` (string, optional): File where error occurred
+- `line` (integer, optional): Line number of error
+- `column` (integer, optional): Column number of error
+
+**Example:**
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_error_context",
+    "arguments": {
+      "error_message": "Null check operator used on null value"
+    }
+  }
+}
+```
+
+### get_suggestions
+
+Get smart code suggestions based on context.
+
+**Parameters:**
+- `error_type` (string, optional): Type of error (null, async, file, list, http)
+- `file_path` (string, optional): File where help is needed
+- `line` (integer, optional): Line number for context
+- `code_context` (string, optional): Surrounding code for context
+- `error_message` (string, optional): Specific error message
+
+**Example:**
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_suggestions",
+    "arguments": {
+      "error_type": "null"
+    }
+  }
+}
+```
+
+### help
+
+Get comprehensive help and usage information.
+
+**Parameters:** None
+
+**Example:**
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "help",
+    "arguments": {}
+  }
+}
+```
+
+### self_improve
+
+Analyze and improve the MCP server itself.
+
+**Parameters:**
+- `analysis_type` (string, optional): Type of analysis: deprecated_apis, performance, code_quality, all (default: "all")
+- `auto_fix` (boolean, optional): Automatically apply improvements (default: false)
+
+**Example:**
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "self_improve",
+    "arguments": {
+      "analysis_type": "all"
+    }
+  }
+}
+```
 
 ## 🚀 Quick Start
 
 ```dart
-import 'package:dart_validation_mcp/flutter_mcp_tools.dart';
+import 'package:dart_validation_mcp/dart_validation_mcp.dart';
 
 // Simple validation
 final validator = SimpleValidator(projectPath: '.');
@@ -279,7 +422,7 @@ The tool handles various error conditions gracefully:
 ### Basic Validation
 
 ```dart
-import 'package:dart_validation_mcp/flutter_mcp_tools.dart';
+import 'package:dart_validation_mcp/dart_validation_mcp.dart';
 
 Future<bool> validateProject(String path) async {
   final validator = SimpleValidator(projectPath: path);
@@ -292,7 +435,7 @@ Future<bool> validateProject(String path) async {
 ### CI/CD Integration
 
 ```dart
-import 'package:dart_validation_mcp/flutter_mcp_tools.dart';
+import 'package:dart_validation_mcp/dart_validation_mcp.dart';
 
 Future<void> ciValidation() async {
   final validator = SimpleValidator(
@@ -320,7 +463,7 @@ Future<void> ciValidation() async {
 ### Custom Reporting
 
 ```dart
-import 'package:dart_validation_mcp/flutter_mcp_tools.dart';
+import 'package:dart_validation_mcp/dart_validation_mcp.dart';
 
 Future<Map<String, dynamic>> generateReport(String path) async {
   final validator = SimpleValidator(projectPath: path);
@@ -394,7 +537,7 @@ The main library exports the following classes:
 
 ```dart
 // Main library export
-library flutter_mcp_tools;
+library dart_validation_mcp;
 
 // Simple validation
 export 'src/validation/simple_validator.dart';
