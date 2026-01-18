@@ -1,21 +1,19 @@
-// Copyright (c) 2026 Flutter MCP Tools Team
-// 
-// This software is released under the MIT License.
-// https://opensource.org/licenses/MIT
-
-/// Flutter MCP Tools - Reusable code quality and validation package
+/// Dart Validation MCP Tools - Simplified Version
+/// 
+/// This package provides simplified validation tools that leverage dart analyze
+/// instead of custom validation logic, reducing code redundancy and maintenance.
 ///
-/// This package provides standardized tools for:
-/// - Dart/Flutter code analysis
-/// - Package validation against pub.dev
-/// - Flutter API documentation checking
-/// - Project validation and reporting
+/// Features:
+/// - Simple wrapper around dart analyze
+/// - JSON parsing of analysis results
+/// - Clean CLI interface
+/// - Minimal code footprint
 ///
-/// Usage: Add as dependency and use tools directly
+/// Usage: Add as dependency and use SimpleValidator directly
 library flutter_mcp_tools;
 
-export 'src/analyzer.dart';
-export 'src/pub_dev_checker.dart';
-export 'src/flutter_docs_checker.dart';
-export 'src/project_validator.dart';
-export 'src/models/validation_models.dart';
+// Simple validation
+export 'src/validation/simple_validator.dart';
+
+// Models (hide conflicting ValidationIssue)
+export 'src/models/validation_models.dart' hide ValidationIssue;

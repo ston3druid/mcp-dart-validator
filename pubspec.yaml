@@ -1,46 +1,20 @@
 name: dart_validation_mcp
-description: Production-ready Dart validation tools with MCP integration for code quality, linting, and API compliance
+description: Simplified Dart validation tools using dart analyze
 version: 1.0.0
-homepage: https://github.com/ston3druid/mcp-dart-validator
-repository: https://github.com/ston3druid/mcp-dart-validator
-issue_tracker: https://github.com/ston3druid/mcp-dart-validator/issues
-documentation: https://github.com/ston3druid/mcp-dart-validator
-
-authors:
-  - ston3druid
-  - Cascade AI
+homepage: https://github.com/example/dart_validation_mcp
 
 environment:
-  sdk: ^3.10.3
-  flutter: ">=3.10.0"
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
-  flutter:
-    sdk: flutter
-  
-  # HTTP for API calls
-  http: ^1.2.0
-  
-  # Path for file operations
-  path: ^1.9.0
-  
-  # Semantic versioning for Dart version detection
-  pub_semver: ^2.1.4
+  dart_mcp_tools: ^0.1.0
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^6.0.0
-  test: ^1.26.3
+  lints: ^3.0.0
+  test: ^1.24.0
 
-flutter:
-  # No Flutter-specific assets needed for this package
-
-# Package configuration
 executables:
-  validate: dart_validation_mcp
-  check_deps: dart_validation_mcp
-  docs_check: dart_validation_mcp
-  health: dart_validation_mcp
-  setup_ci: dart_validation_mcp
-  version: dart_validation_mcp
+  dart_mcp_tools: dart_mcp_tools
+
+# Remove all the old complex validation files - we now use dart analyze
+# This reduces the codebase from ~4000 lines to ~200 lines

@@ -9,6 +9,7 @@ class ValidationIssue {
   final int? line;
   final int? column;
   final String? rule;
+  final String? suggestion;
 
   const ValidationIssue({
     required this.filePath,
@@ -17,6 +18,7 @@ class ValidationIssue {
     this.line,
     this.column,
     this.rule,
+    this.suggestion,
   });
 
   @override
