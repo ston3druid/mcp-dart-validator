@@ -156,7 +156,7 @@ class SimpleValidator {
       }
 
       return ValidationResult(
-        success: false,
+        success: issues.isEmpty, // Success if no issues found
         issues: issues,
         message: message,
         filesAnalyzed: filesAnalyzed,

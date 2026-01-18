@@ -20,14 +20,17 @@ git clone https://github.com/ston3druid/mcp-dart-validator.git
 cd mcp-dart-validator
 dart pub get
 
-# Quick validation
+# Easiest way - quick validation with smart defaults
+dart run bin/dart_mcp_tools.dart q
+
+# Short aliases for common tasks
+dart run bin/dart_mcp_tools.dart v      # validate
+dart run bin/dart_mcp_tools.dart a      # analyze
+dart run bin/dart_mcp_tools.dart check  # quick validation
+
+# Traditional commands
 dart run bin/dart_mcp_tools.dart validate
-
-# Detailed analysis
 dart run bin/dart_mcp_tools.dart analyze
-
-# With options
-dart run bin/dart_mcp_tools.dart validate --verbose --format json
 ```
 
 ## Features
@@ -41,6 +44,7 @@ dart run bin/dart_mcp_tools.dart validate --verbose --format json
 - 📝 **Multiple Output Formats** - Text and JSON output options
 - 🚫 **Smart Exclusions** - Configurable path exclusions with pattern matching
 - 🤖 **MCP Integration** - Simple Model Context Protocol server for AI assistants
+- ⚡ **Maximum Ease of Use** - Short aliases, smart defaults, auto-detection
 
 ## Description
 
@@ -48,14 +52,34 @@ This project provides simplified Dart validation tools by leveraging the built-i
 
 ## Commands
 
-| Command | Description | Options |
-|---------|-------------|----------|
-| `validate` | Validate project using dart analyze | `--path <path>`, `--exclude <path>`, `--verbose`, `--format <format>` |
-| `analyze` | Run detailed dart analyze with verbose output | `--path <path>`, `--verbose` |
-| `mcp_validation_server` | Start MCP server for AI assistants | - |
-| `--help` | Show help message | - |
+| Command | Short | Description | Smart Defaults |
+|---------|-------|-------------|---------------|
+| `validate` | `v` | Full validation with all options | Auto-detects project path |
+| `analyze` | `a` | Detailed dart analyze with verbose output | Auto-detects project path |
+| `quick` | `q` | Quick validation with smart defaults | Excludes build, .dart_tool, generated |
+| `check` | - | Alias for quick validation | Same as quick |
 
-### MCP Server
+### Ease of Use Examples
+
+```bash
+# Super simple - just type 'q' for quick validation
+dart run bin/dart_mcp_tools.dart q
+
+# Short aliases
+dart run bin/dart_mcp_tools.dart v      # validate
+dart run bin/dart_mcp_tools.dart a      # analyze
+
+# Smart features - auto-detects project, excludes common dirs
+dart run bin/dart_mcp_tools.dart quick
+
+# Quiet mode for scripts
+dart run bin/dart_mcp_tools.dart q --quiet
+
+# Short options
+dart run bin/dart_mcp_tools.dart v -e test -e build --json
+```
+
+## MCP Server
 
 Start the MCP server to integrate with AI assistants:
 
