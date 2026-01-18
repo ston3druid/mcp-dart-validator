@@ -1,14 +1,14 @@
 name: dart_validation_mcp
 description: Production-ready Dart validation tools with MCP integration for code quality, linting, and API compliance
 version: 1.0.0
-homepage: https://github.com/cascade-ai/dart_validation_mcp
-repository: https://github.com/cascade-ai/dart_validation_mcp
-issue_tracker: https://github.com/cascade-ai/dart_validation_mcp/issues
-documentation: https://pub.dev/packages/dart_validation_mcp
+homepage: https://github.com/ston3druid/mcp-dart-validator
+repository: https://github.com/ston3druid/mcp-dart-validator
+issue_tracker: https://github.com/ston3druid/mcp-dart-validator/issues
+documentation: https://github.com/ston3druid/mcp-dart-validator
 
 authors:
-  - Cascade AI <dev@cascade-ai>
-  - Flutter MCP Tools Team <team@fluttermcp.tools>
+  - ston3druid <contact@mcp-dart-validator.dev>
+  - Cascade AI <contact@mcp-dart-validator.dev>
 
 environment:
   sdk: ^3.10.3
