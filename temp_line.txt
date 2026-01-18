@@ -1,0 +1,1 @@
+        final importMatches = RegExp(r"import ['\\\"]([^'\\\"]+)['\\\"]").allMatches(content);

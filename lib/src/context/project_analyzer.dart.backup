@@ -1,7 +1,4 @@
 import 'dart:io';
-import 'package:analyzer/dart/analysis/utilities.dart';
-import 'package:analyzer/dart/ast/ast.dart';
-import 'package:analyzer/dart/analysis/features.dart';
 import '../models/context_models.dart';
 
 /// Analyzes project structure and context for AI assistance
@@ -76,8 +73,7 @@ class ProjectAnalyzer {
   Future<Map<String, List<String>>> _analyzeImports() async {
     final imports = <String, List<String>>{};
     
-    final files = await _findDartFiles().toList();
-    for (final file in files) {
+    await for (final file in _findDartFiles()) {
       try {
         final content = await file.readAsString();
         final lines = content.split('\n');
@@ -105,8 +101,7 @@ class ProjectAnalyzer {
   Future<Map<String, ClassInfo>> _analyzeClasses() async {
     final classes = <String, ClassInfo>{};
     
-    final files = await _findDartFiles().toList();
-    for (final file in files) {
+    await for (final file in _findDartFiles()) {
       try {
         final content = await file.readAsString();
         final className = _extractClassName(file.path);
@@ -163,8 +158,13 @@ class ProjectAnalyzer {
     for (final file in files) {
       try {
         final content = await file.readAsString();
-        final packagesInFile = _findLibrariesInContent(content);
-        packages.addAll(packagesInFile);
+        final importMatches = RegExp(r"import ['\"]([^'\"]+)['\"]").allMatches(content);
+        for (final match in importMatches) {
+          final packageName = match.group(1);
+          if (packageName != null && packageName.contains(':')) {
+            packages.add(packageName.split(':')[0]);
+          }
+        }
       } catch (e) {
         // Skip files that can't be read
       }
@@ -173,83 +173,11 @@ class ProjectAnalyzer {
     return packages.toList();
   }
 
-  /// Find libraries in Dart content using analyzer package
-  List<String> _findLibrariesInContent(String content) {
-    try {
-      // Parse the dart string
-      final parseResult = parseString(
-        content: content,
-        featureSet: FeatureSet.latestLanguageVersion(),
-      );
-      
-      if (parseResult.unit == null) {
-        return [];
-      }
-      
-      // Get all directives (imports, exports, etc.)
-      final directives = parseResult.unit.directives;
-      
-      // Only retain the imports
-      final importDirectives = directives.whereType<ImportDirective>();
-      
-      // Extract package names from imports
-      final libraries = <String>[];
-      for (final directive in importDirectives) {
-        final name = _extractPackageName(directive);
-        if (name != null) {
-          libraries.add(name);
-        }
-      }
-      
-      return libraries;
-    } catch (e) {
-      // If parsing fails, fall back to simple string search
-      return _findPackagesWithSimpleSearch(content);
-    }
-  }
-
-  /// Extract package name from import directive
-  String? _extractPackageName(ImportDirective importDirective) {
-    final uri = importDirective.uri.stringValue;
-    if (uri != null && uri.startsWith('package:')) {
-      return uri
-          .replaceAll('package:', '')
-          .replaceFirst('/', ':')
-          .replaceAll('/', '.')
-          .replaceAll('.dart', '');
-    }
-    return null;
-  }
-
-  /// Fallback method using simple string search
-  List<String> _findPackagesWithSimpleSearch(String content) {
-    final packages = <String>[];
-    final lines = content.split('\n');
-    
-    for (final line in lines) {
-      final trimmedLine = line.trim();
-      if (trimmedLine.startsWith('import ')) {
-        // Look for package: prefix
-        if (trimmedLine.contains('package:')) {
-          final startIndex = trimmedLine.indexOf('package:') + 8;
-          final endIndex = trimmedLine.indexOf(';', startIndex);
-          if (startIndex > 8 && endIndex > startIndex) {
-            final packageName = trimmedLine.substring(startIndex, endIndex);
-            packages.add(packageName);
-          }
-        }
-      }
-    }
-    
-    return packages;
-  }
-
   /// Find deprecated API usage
   Future<List<DeprecatedApiUsage>> _findDeprecatedUsage() async {
     final deprecatedUsages = <DeprecatedApiUsage>[];
     
-    final files = await _findDartFiles().toList();
-    for (final file in files) {
+    await for (final file in _findDartFiles()) {
       try {
         final lines = await file.readAsLines();
         for (int i = 0; i < lines.length; i++) {
@@ -285,8 +213,7 @@ class ProjectAnalyzer {
     bool usesNullSafety = false;
     bool usesExtensionMethods = false;
     
-    final files = await _findDartFiles().toList();
-    for (final file in files) {
+    await for (final file in _findDartFiles()) {
       try {
         final content = await file.readAsString();
         
@@ -334,8 +261,7 @@ class ProjectAnalyzer {
     final extensionMethods = <String>[];
     final typeAliases = <String, String>{};
     
-    final files = await _findDartFiles().toList();
-    for (final file in files) {
+    await for (final file in _findDartFiles()) {
       try {
         final content = await file.readAsString();
         
