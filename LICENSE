@@ -1,5 +1,6 @@
 MIT License
 
+Copyright (c) 2026 Cascade AI
 Copyright (c) 2026 ston3druid
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,3 +20,48 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+## 📄 License Summary
+
+This project is licensed under the MIT License, which means:
+
+### ✅ **What You Can Do**
+- **Commercial Use**: Use this software in commercial products
+- **Modification**: Modify the source code as needed
+- **Distribution**: Distribute copies of the software
+- **Sublicensing**: License derivative works under different terms
+- **Private Use**: Use the software privately without disclosure
+
+### ⚠️ **What You Must Do**
+- **Include Copyright**: Keep the copyright notice in all copies
+- **Include License**: Include the full license text in substantial portions
+- **Attribution**: Give credit to the original authors
+
+### ❌ **What You Cannot Do**
+- **No Liability**: Authors are not liable for damages
+- **No Warranty**: Software is provided "as is" without guarantees
+
+---
+
+## 🌟 **Why MIT License**
+
+- **Maximum Freedom**: Minimal restrictions on usage
+- **Business Friendly**: Suitable for commercial applications
+- **Simple & Clear**: Easy to understand and comply
+- **Industry Standard**: Most popular open source license
+- **GitHub Compatible**: Automatically detected and displayed
+
+---
+
+## 📞 **Contact**
+
+For questions about licensing or commercial use:
+
+📧 **Cascade AI**: dev@cascade-ai
+🐛 **GitHub Issues**: https://github.com/ston3druid/mcp-dart-validator/issues
+
+---
+
+*This license applies to all code, documentation, and assets in this repository.*
