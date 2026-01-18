@@ -15,5 +15,5 @@ library flutter_mcp_tools;
 // Simple validation
 export 'src/validation/simple_validator.dart';
 
-// Models (hide conflicting ValidationIssue)
-export 'src/models/validation_models.dart' hide ValidationIssue;
+// Models and utilities
+export 'src/models/validation_models.dart';

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import '../models/validation_models.dart';
 
 /// Simple wrapper around dart analyze for validation
 class SimpleValidator {
@@ -38,6 +39,7 @@ class SimpleValidator {
             line: data['location']['line'] as int?,
             column: data['location']['column'] as int?,
             rule: data['code'] as String?,
+            suggestion: null, // dart analyze doesn't provide suggestions
           );
           issues.add(issue);
         } catch (e) {
@@ -83,24 +85,5 @@ class ValidationResult {
     required this.success,
     required this.issues,
     required this.message,
-  });
-}
-
-/// Simple validation issue
-class ValidationIssue {
-  final String filePath;
-  final String message;
-  final String type;
-  final int? line;
-  final int? column;
-  final String? rule;
-
-  ValidationIssue({
-    required this.filePath,
-    required this.message,
-    required this.type,
-    this.line,
-    this.column,
-    this.rule,
   });
 }
