@@ -61,7 +61,8 @@ String _expandCommand(String command) {
 String _findProjectPath(List<String> args) {
   final pathIndex = args.indexWhere((arg) => arg == '--path' || arg == '-p');
   if (pathIndex != -1 && pathIndex + 1 < args.length) {
-    return args[pathIndex + 1];
+    final inputPath = args[pathIndex + 1];
+    return _normalizePath(inputPath);
   }
   
   // Auto-detect: look for pubspec.yaml in current or parent directories
@@ -74,6 +75,17 @@ String _findProjectPath(List<String> args) {
   }
   
   return Directory.current.path;
+}
+
+/// Normalize path for consistent handling
+String _normalizePath(String path) {
+  if (path.startsWith(RegExp(r'^[A-Za-z]:')) || path.startsWith('/')) {
+    // Absolute path
+    return Directory(path).absolute.path;
+  } else {
+    // Relative path - resolve against current directory
+    return Directory(Directory.current.path).resolveSymbolicLinksSync();
+  }
 }
 
 /// Parse command line options into a structured format

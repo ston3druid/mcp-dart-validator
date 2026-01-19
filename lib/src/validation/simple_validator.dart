@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:glob/glob.dart';
 import '../models/validation_models.dart';
 
 /// Simple wrapper around dart analyze for validation
@@ -36,16 +37,23 @@ class SimpleValidator {
       // Use Directory.list instead of find command for better cross-platform compatibility
       final dir = Directory(projectPath);
       int count = 0;
+      int processed = 0;
       
       await for (final entity in dir.list(recursive: true, followLinks: false)) {
+        processed++;
+        if (verbose && processed % 100 == 0) {
+          print('🔍 Scanned $processed files...');
+        }
+        
         if (entity is File && entity.path.endsWith('.dart')) {
-          // Skip common build/cache directories
-          if (!entity.path.contains('.dart_tool') && 
-              !entity.path.contains('build') &&
-              !excludePaths.any((exclude) => entity.path.contains(exclude))) {
+          if (!_shouldExclude(entity.path)) {
             count++;
           }
         }
+      }
+      
+      if (verbose) {
+        print('📊 Found $count Dart files to analyze');
       }
       
       return count;
@@ -55,6 +63,32 @@ class SimpleValidator {
       }
       return 0;
     }
+  }
+
+  /// Check if a file path should be excluded from analysis
+  bool _shouldExclude(String filePath) {
+    // Normalize path for consistent comparison
+    final normalizedPath = filePath.replaceAll('\\', '/');
+    
+    // Check against exclude patterns using glob matching
+    for (final pattern in excludePaths) {
+      try {
+        final glob = Glob(pattern);
+        if (glob.matches(normalizedPath)) {
+          return true;
+        }
+      } catch (e) {
+        // Fallback to simple contains if glob pattern is invalid
+        if (normalizedPath.contains(pattern)) {
+          return true;
+        }
+      }
+    }
+    
+    // Default exclusions
+    return normalizedPath.contains('/.dart_tool/') ||
+           normalizedPath.contains('/build/') ||
+           normalizedPath.contains('/generated/');
   }
 
   /// Run dart analyze and return results
@@ -83,13 +117,10 @@ class SimpleValidator {
 
       final filesAnalyzed = await _countDartFiles();
       
-      // Build analyze command with exclusions
+      // Build analyze command
       final args = ['analyze', '--format=json'];
-      if (excludePaths.isNotEmpty) {
-        for (final path in excludePaths) {
-          args.addAll(['--exclude', path]);
-        }
-      }
+      // Note: dart analyze doesn't support --exclude flag directly
+      // We handle exclusions in our file counting logic instead
 
       if (verbose) {
         print('🔍 Analyzing $filesAnalyzed Dart files...');
@@ -97,6 +128,17 @@ class SimpleValidator {
 
       final result = await Process.run('dart', args, 
           workingDirectory: projectPath);
+      
+      // Check if dart analyze command itself failed
+      if (result.exitCode != 0 && result.stdout.toString().trim().isEmpty) {
+        return ValidationResult(
+          success: false,
+          issues: [],
+          message: 'dart analyze command failed with exit code ${result.exitCode}: ${result.stderr}',
+          filesAnalyzed: filesAnalyzed,
+          analysisTime: stopwatch.elapsed,
+        );
+      }
       
       if (result.exitCode == 0) {
         return ValidationResult(
