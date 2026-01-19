@@ -33,6 +33,29 @@ dart run bin/dart_mcp_tools.dart validate
 dart run bin/dart_mcp_tools.dart analyze
 ```
 
+## 🤖 AI Agent Quick Activation
+
+**For AI assistants**: This tool is designed for immediate AI agent discovery and activation.
+
+### One-Command Activation
+```bash
+# AI agents can run this single command
+dart run activate.dart --auto
+```
+
+### Discovery Files
+AI agents should look for:
+- **`AI_AGENT_README.md`** - Complete AI agent guide
+- **`mcp_manifest.json`** - Machine-readable tool manifest  
+- **`activate.dart`** - Auto-activation script
+
+### Quick MCP Server Start
+```bash
+dart run bin/mcp_validation_server.dart
+```
+
+See [AI_AGENT_README.md](AI_AGENT_README.md) for detailed AI agent instructions.
+
 ## Features
 
 - 🚀 **Fast & Lightweight** - Uses native `dart analyze` for optimal performance

@@ -1,0 +1,113 @@
+{
+  "name": "dart_validation_mcp",
+  "version": "1.0.0",
+  "description": "AI-friendly Dart validation and context analysis MCP tool",
+  "type": "mcp_tool",
+  "discovery_files": [
+    "AI_AGENT_README.md",
+    "activate.dart",
+    "mcp_manifest.json"
+  ],
+  "entry_points": {
+    "mcp_server": "bin/mcp_validation_server.dart",
+    "cli_tools": "bin/dart_mcp_tools.dart",
+    "activation_script": "activate.dart"
+  },
+  "prerequisites": {
+    "dart_sdk": ">=2.17.0",
+    "dependencies": ["analyzer: ^8.4.1"]
+  },
+  "activation_commands": {
+    "immediate": "dart run bin/mcp_validation_server.dart",
+    "auto_activate": "dart run activate.dart --auto",
+    "test": "dart run bin/dart_mcp_tools.dart q"
+  },
+  "mcp_tools": [
+    {
+      "name": "validate_dart_project",
+      "purpose": "Validate Dart code with smart defaults",
+      "parameters": {
+        "project_path": {"type": "string", "optional": true, "default": "."},
+        "exclude_paths": {"type": "array", "optional": true, "default": ["build", ".dart_tool"]},
+        "verbose": {"type": "boolean", "optional": true, "default": false},
+        "format": {"type": "string", "optional": true, "default": "text"}
+      }
+    },
+    {
+      "name": "analyze_project_context",
+      "purpose": "Understand project structure and dependencies",
+      "parameters": {
+        "project_path": {"type": "string", "optional": true, "default": "."}
+      }
+    },
+    {
+      "name": "get_error_context",
+      "purpose": "Get context and suggestions for specific errors",
+      "parameters": {
+        "error_message": {"type": "string", "required": true},
+        "file_path": {"type": "string", "optional": true},
+        "line": {"type": "integer", "optional": true},
+        "column": {"type": "integer", "optional": true},
+        "project_path": {"type": "string", "optional": true, "default": "."}
+      }
+    },
+    {
+      "name": "get_suggestions",
+      "purpose": "Get smart code suggestions based on context",
+      "parameters": {
+        "error_type": {"type": "string", "optional": true},
+        "file_path": {"type": "string", "optional": true},
+        "line": {"type": "integer", "optional": true},
+        "code_context": {"type": "string", "optional": true},
+        "error_message": {"type": "string", "optional": true},
+        "project_path": {"type": "string", "optional": true, "default": "."}
+      }
+    },
+    {
+      "name": "help",
+      "purpose": "Get help and usage information",
+      "parameters": {}
+    },
+    {
+      "name": "self_improve",
+      "purpose": "Analyze and improve the MCP server itself",
+      "parameters": {
+        "analysis_type": {"type": "string", "optional": true, "default": "all"},
+        "auto_fix": {"type": "boolean", "optional": true, "default": false}
+      }
+    }
+  ],
+  "features": [
+    "Smart path handling - respects agent-provided paths",
+    "Auto-discovery of Dart projects",
+    "Context-aware error resolution",
+    "Self-improvement capabilities",
+    "JSON-RPC 2.0 protocol",
+    "Cross-platform compatibility"
+  ],
+  "usage_patterns": {
+    "project_analysis": {
+      "tool": "analyze_project_context",
+      "description": "Analyze new project structure"
+    },
+    "error_resolution": {
+      "tool": "get_error_context", 
+      "description": "Get help for compilation errors"
+    },
+    "code_suggestions": {
+      "tool": "get_suggestions",
+      "description": "Get intelligent code recommendations"
+    },
+    "validation": {
+      "tool": "validate_dart_project",
+      "description": "Validate code quality"
+    }
+  },
+  "ai_agent_notes": {
+    "discovery": "Look for AI_AGENT_README.md or mcp_manifest.json",
+    "activation": "Run 'dart run activate.dart --auto' for instant setup",
+    "path_handling": "Tools respect agent-provided project_path parameter",
+    "self_improvement": "Only analyzes own project, ignores provided paths",
+    "protocol": "Uses JSON-RPC 2.0 over stdin/stdout"
+  }
+}

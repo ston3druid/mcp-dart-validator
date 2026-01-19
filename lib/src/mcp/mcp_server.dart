@@ -141,11 +141,13 @@ class DartValidationMcpServer {
           'error_message': {'type': 'string', 'description': 'Error message to analyze', 'required': true},
           'file_path': {'type': 'string', 'description': 'File where error occurred'},
           'line': {'type': 'integer', 'description': 'Line number of error'},
-          'column': {'type': 'integer', 'description': 'Column number of error'}
+          'column': {'type': 'integer', 'description': 'Column number of error'},
+          'project_path': {'type': 'string', 'description': 'Path to analyze (auto-detected if not provided)', 'default': '.'}
         },
         'examples': [
           {'description': 'Get help for null error', 'arguments': {'error_message': 'Null check operator used on null value'}},
-          {'description': 'Get context for file error', 'arguments': {'error_message': 'File not found', 'file_path': 'test.dart', 'line': 10}}
+          {'description': 'Get context for file error', 'arguments': {'error_message': 'File not found', 'file_path': 'test.dart', 'line': 10}},
+          {'description': 'Get context for specific project', 'arguments': {'error_message': 'Undefined method', 'project_path': '/path/to/project'}}
         ]
       },
       {
@@ -156,12 +158,14 @@ class DartValidationMcpServer {
           'file_path': {'type': 'string', 'description': 'File where help is needed'},
           'line': {'type': 'integer', 'description': 'Line number for context'},
           'code_context': {'type': 'string', 'description': 'Surrounding code for context'},
-          'error_message': {'type': 'string', 'description': 'Specific error message'}
+          'error_message': {'type': 'string', 'description': 'Specific error message'},
+          'project_path': {'type': 'string', 'description': 'Path to analyze (auto-detected if not provided)', 'default': '.'}
         },
         'examples': [
           {'description': 'Get null safety suggestions', 'arguments': {'error_type': 'null'}},
           {'description': 'Get async suggestions', 'arguments': {'error_type': 'async', 'file_path': 'test.dart', 'line': 10}},
-          {'description': 'Get suggestions for specific error', 'arguments': {'error_message': 'undefined method', 'file_path': 'test.dart'}}
+          {'description': 'Get suggestions for specific error', 'arguments': {'error_message': 'undefined method', 'file_path': 'test.dart'}},
+          {'description': 'Get suggestions for specific project', 'arguments': {'error_type': 'null', 'project_path': '/path/to/project'}}
         ]
       },
       {
@@ -372,7 +376,9 @@ class DartValidationMcpServer {
     }
     
     try {
-      final errorContextProvider = ErrorContextProvider(projectPath: Directory.current.path);
+      // Use agent-provided project path or default to current directory
+      final projectPath = arguments['project_path']?.toString() ?? Directory.current.path;
+      final errorContextProvider = ErrorContextProvider(projectPath: projectPath);
       final context = await errorContextProvider.getErrorContext(errorMessage, filePath, line, column);
       
       // Enhanced response with actionable advice
@@ -420,7 +426,9 @@ class DartValidationMcpServer {
     final errorMessage = arguments['error_message'] as String?;
     
     try {
-      final suggester = SmartSuggester(projectPath: Directory.current.path);
+      // Use agent-provided project path or default to current directory
+      final projectPath = arguments['project_path']?.toString() ?? Directory.current.path;
+      final suggester = SmartSuggester(projectPath: projectPath);
       final suggestions = await suggester.getSuggestions(
         errorType: errorType,
         filePath: filePath,
@@ -539,6 +547,7 @@ class DartValidationMcpServer {
     final autoFix = arguments['auto_fix'] as bool? ?? false;
     
     try {
+      // Always use the MCP server's own project path for self-improvement
       final projectPath = Directory.current.path;
       final analyzer = ProjectAnalyzer(projectPath: projectPath);
       final context = await analyzer.analyzeProjectContext();
